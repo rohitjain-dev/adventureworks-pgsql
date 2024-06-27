@@ -1,0 +1,10 @@
+version: '2'
+services:
+  db:
+    build: ./
+    container_name: adventureworks-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - 54321:5432
