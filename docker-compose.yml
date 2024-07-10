@@ -1,9 +1,34 @@
+version: '3.8'
 services:
   db:
     build: ./
     container_name: adventureworks-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 12345
     ports:
-      - 54321:5432
+      - "54321:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  talos:
+    image: rubiklabs/talos:0.1.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./talos_dev:/etc/dataos/work
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
